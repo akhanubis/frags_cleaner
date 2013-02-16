@@ -20,7 +20,7 @@ module FragsCleaner
       update_current_state!
       self.mtime_of_last_deleted = Time.now
       while true do
-        aux_ptr = FFI::MemoryPointer.new :pointer
+        aux_ptr = FFI::MemoryPointer.new 36 #sizeof de la struct MSG
         delete_last_movie! if FCUser32.GetMessageW(aux_ptr, nil, 0, 0)
         aux_ptr.free
       end
