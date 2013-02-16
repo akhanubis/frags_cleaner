@@ -10,6 +10,7 @@ rescue LoadError
 end
 
 load 'lib/config.rb'
+load 'lib/user32.rb'
 load 'lib/main.rb'
 
 def delete_log(msg)

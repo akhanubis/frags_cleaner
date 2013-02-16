@@ -10,7 +10,7 @@ module FragsCleaner
       Config.current_config.each do |config, value|
         delete_log Config.config_to_string config, value
       end
-      import_get_key
+      FCUser32.import_register_hot_key
       main_loop
     end
 
@@ -20,18 +20,12 @@ module FragsCleaner
       update_current_state!
       self.mtime_of_last_deleted = Time.now
       while true do
-        delete_last_movie! if GetAsyncKeyState(Config.key) != 0
-        sleep Config.sleep_time
+        aux_ptr = FFI::MemoryPointer.new :pointer
+        delete_last_movie! if FCUser32.GetMessageW(aux_ptr, nil, 0, 0)
+        aux_ptr.free
       end
     end
-    def import_get_key
-      extend FFI::Library
-      ffi_lib 'user32'
-      ffi_convention :stdcall
-      attach_function :GetAsyncKeyState, [ :int ], :short
-      delete_log 'GetAsyncKeyState importada!'
-    end
-
+    
     def delete_last_movie!
       update_current_state!
 

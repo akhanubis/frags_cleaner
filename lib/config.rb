@@ -3,10 +3,9 @@
 module FragsCleaner
   module Config
     CONFIG_FILE = 'frags_cleaner.ini'
-    INTEGER_CONFIGS = [:sleep_time, :key]
+    INTEGER_CONFIGS = [:key]
 
     @current_config = {
-      sleep_time: 5, #in seconds
       key: 0x77, #F8 http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
       movies_path: 'C://Fraps//Movies'
     }
