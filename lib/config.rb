@@ -23,7 +23,7 @@ module FragsCleaner
           supported_configs = @current_config.keys
           File.open(CONFIG_FILE, 'r') do |file|
             file.each_with_object @current_config do |line, configs|
-              match = line.match /(#{ supported_configs * '|' }):(\d+)/
+              match = line.match /(#{ supported_configs * '|' }):(.*)$/
               configs[match[1].to_sym] = match[2] if match
             end
             @current_config.each do |k, v|
