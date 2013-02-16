@@ -1,4 +1,4 @@
 frags_cleaner
 =============
 
-A tool for quickly discard Frap videos
+A friend asked for a tool for quickly discard Frap videos.
