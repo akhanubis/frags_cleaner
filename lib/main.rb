@@ -2,6 +2,8 @@
 
 module FragsCleaner
   class << self
+    attr_accessor :mtime_of_last_deleted
+
     def run
       Config.load_config!
       delete_log 'Configuración actual:'
@@ -16,7 +18,7 @@ module FragsCleaner
     def main_loop
       delete_log 'Iniciando...'
       update_current_state!
-      update_previous_last_video!
+      self.mtime_of_last_deleted = Time.now
       while true do
         delete_last_movie! if GetAsyncKeyState(Config.key) != 0
         sleep Config.sleep_time
@@ -33,27 +35,22 @@ module FragsCleaner
     def delete_last_movie!
       update_current_state!
 
-      if files_changed && !delete_movie_at!(0)
+      if !delete_movie_at!(0)
         #probablemente el video más reciente es en el que Frabs está grabando, borrar el anterior
-        delete_log 'Warning: Ninguno de los dos videos más recientes se pudo borrar.' unless delete_movie_at! 1
+        delete_log 'Ninguno de los dos videos más recientes se pudo borrar.' unless delete_movie_at! 1
       end
-
-      update_previous_last_video!
-    end
-
-    def files_changed
-      @previous_last_video != @current_state.first
     end
 
     def delete_movie_at!(index)
       to_be_deleted = @current_state[index]
-      return false unless to_be_deleted
+      return false unless to_be_deleted && to_be_deleted[:mtime] > mtime_of_last_deleted
       File.delete to_be_deleted[:filename]
       delete_log "#{ to_be_deleted[:filename] } borrado!"
       @current_state.delete_at index
+      self.mtime_of_last_deleted = to_be_deleted[:mtime]
       true
     rescue
-      delete_log "Warning: No se pudo borrar #{ to_be_deleted[:filename] }"
+      delete_log "No se pudo borrar #{ to_be_deleted[:filename] }. Probablemente Fraps esté grabando en ese video"
       false
     end
 
@@ -61,10 +58,6 @@ module FragsCleaner
       @current_state = Dir.glob("#{ Config.movies_path }//*.avi").map do |filename|
         { filename: filename, mtime: File.mtime(filename) }
       end.sort { |a, b| b[:mtime] <=> a[:mtime] }
-    end
-
-    def update_previous_last_video!
-      @previous_last_video = @current_state.first
     end
   end
 end
