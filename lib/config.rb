@@ -39,8 +39,7 @@ module FragsCleaner
       end
 
       def method_missing(meth, *args, &block)
-        super unless current_config.keys.include? meth
-        current_config[meth]
+        current_config[meth] || super
       end
     end
   end
