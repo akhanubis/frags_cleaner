@@ -30,8 +30,8 @@ module FragsCleaner
       update_current_state!
 
       if !delete_movie_at!(0)
-        #probablemente el video más reciente es en el que Frabs está grabando, borrar el anterior
-        delete_log 'Ninguno de los dos videos más recientes se pudo borrar.' unless delete_movie_at! 1
+        #probablemente el video más reciente es en el que Fraps está grabando, borrar el anterior
+        delete_log 'Ocurrió un error o no hay nada para borrar.' unless delete_movie_at! 1
       end
     end
 
