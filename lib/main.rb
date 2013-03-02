@@ -29,10 +29,18 @@ module FragsCleaner
     def delete_last_movie!
       update_current_state!
 
-      if !delete_movie_at!(0)
+      if delete_movie_at!(0)
+        success = true
+      else
         #probablemente el video más reciente es en el que Fraps está grabando, borrar el anterior
-        delete_log 'Ocurrió un error o no hay nada para borrar.' unless delete_movie_at! 1
+        if delete_movie_at!(1)
+          success = true
+        else
+          delete_log 'Ocurrió un error o no hay nada para borrar.'
+        end
       end
+
+      Sound.play_alert(success)
     end
 
     def delete_movie_at!(index)

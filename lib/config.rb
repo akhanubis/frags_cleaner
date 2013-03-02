@@ -2,12 +2,18 @@
 
 module FragsCleaner
   module Config
+    STATIC_COMMENTS_ON_CONFIG_FILE = <<eos
+#key: virtual key code de msdn
+#movies_path: path a la carpeta movie de Fraps (ejemplo: C://Fraps//Movies)
+#volume: valor entre 0 y 128 que define el volumen de los sonidos indicadores de que se pudo borrar o no una movie
+eos
     CONFIG_FILE = 'frags_cleaner.ini'
-    INTEGER_CONFIGS = [:key]
+    INTEGER_CONFIGS = [:key, :volume]
 
     @current_config = {
       key: 0x77, #F8 http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
-      movies_path: 'C://Fraps//Movies'
+      movies_path: 'C://Fraps//Movies',
+      volume: 32
     }
     
     class << self
@@ -32,6 +38,7 @@ module FragsCleaner
         else
           delete_log "Falta el archivo de configuración #{CONFIG_FILE}. Creando uno con los valores default..."
           File.open(CONFIG_FILE, 'w') do |file|
+            file.puts STATIC_COMMENTS_ON_CONFIG_FILE
             @current_config.each { |k, v| file.puts config_to_string(k,v) }
           end
         end
